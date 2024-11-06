@@ -37,17 +37,11 @@ public class ScriptMovement : MonoBehaviour
         transform.Translate(moveX * speed * Time.deltaTime, 0, 0);// Di chuyển sang trái và phải
 
         // di chuyển quay sang trái và phải
-        if (moveX > 0)
-        {
-            spriteRenderer.flipX = false;
-        }
-        else if (moveX < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
+        if (moveX > 0) spriteRenderer.flipX = false;
+        if (moveX < 0) spriteRenderer.flipX = true;
 
 
-        if (scriptAnimation.state == ScriptAnimation.PlayerState.Idle && Input.GetKeyDown(KeyCode.UpArrow)) //ẩn lên là nhảy lên
+        if (scriptCheck.isGrounded && scriptAnimation.state != 2 && Input.GetKeyDown(KeyCode.UpArrow)) //ẩn lên là nhảy lên
             rigidBody2D.velocity = Vector2.up * jumpForce;
         //Debug.Log(Isgrounded);
 

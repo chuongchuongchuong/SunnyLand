@@ -7,6 +7,7 @@ public class ScriptAnimation : MonoBehaviour
     private Animator anim;
     private ScriptMovement scriptMovement;
     private ScriptCheck scriptCheck;
+    public int state;
 
     void Awake()
     {
@@ -14,17 +15,6 @@ public class ScriptAnimation : MonoBehaviour
         scriptMovement = GetComponent<ScriptMovement>();
         scriptCheck = GetComponent<ScriptCheck>();
     }
-
-    public enum PlayerState
-    {
-        Idle,
-        isRunning,
-        isCrouching,
-        isJumpingUp,
-        isFallingDown,
-    }
-
-    public PlayerState state;
 
 
 
@@ -39,66 +29,50 @@ public class ScriptAnimation : MonoBehaviour
     {
         switch (state)
         {
-            case PlayerState.Idle:
+            case 0:
                 if (scriptMovement.moveX != 0) // đang đứng yên xong di chuyển
-                    state = PlayerState.isRunning;
+                    state = 1;
 
                 if (Input.GetKeyDown(KeyCode.DownArrow)) // đang đứng yên xong ngồi
-                    state = PlayerState.isCrouching;
+                    state = 2;
 
                 if (Input.GetKeyDown(KeyCode.UpArrow)) // đang đứng yên xong nhảy lên
-                    state = PlayerState.isJumpingUp;
+                    state = 3;
 
                 break;
 
-            case PlayerState.isRunning:
+            case 1:
                 if (scriptMovement.moveX == 0) // đang chạy xong đứng im
-                    state = PlayerState.Idle;
+                    state = 0;
                 if (Input.GetKeyDown(KeyCode.UpArrow)) // đang chạy xong nhảy lên
-                    state = PlayerState.isJumpingUp;
+                    state = 3;
                 if (scriptCheck.isFalling)
-                    state = PlayerState.isFallingDown;
+                    state = 4;
 
                 break;
 
-            case PlayerState.isCrouching:
+            case 2:
                 if (Input.GetKeyDown(KeyCode.UpArrow)) // đang cúi xong đứng lên
-                    state = PlayerState.Idle;
+                    state = 0;
                 if (scriptCheck.isFalling)
-                    state = PlayerState.isFallingDown;
+                    state = 4;
 
                 break;
-            case PlayerState.isJumpingUp:
+            case 3:
                 if (scriptCheck.isFalling)
-                    state = PlayerState.isFallingDown;
+                    state = 4;
 
                 break;
 
-            case PlayerState.isFallingDown:
+            case 4:
                 if (!scriptCheck.isFalling)
-                    state = PlayerState.Idle;
+                    state = 0;
 
                 break;
         }
 
-        PlayerStateUpdate();
-    }
 
-    void PlayerStateUpdate()
-    {
-        switch (state)
-        {
-            case PlayerState.Idle:
-                anim.SetInteger("state", 0); break;
-            case PlayerState.isRunning:
-                anim.SetInteger("state", 1); break;
-            case PlayerState.isCrouching:
-                anim.SetInteger("state", 2); break;
-            case PlayerState.isJumpingUp:
-                anim.SetInteger("state", 3); break;
-            case PlayerState.isFallingDown:
-                anim.SetInteger("state", 4); break;
-        }
-    }
+        anim.SetInteger("state", state);
 
+    }
 }
